@@ -30,7 +30,7 @@ void BubbleSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
         while (currPos <= end) {
             T currentItem = list[currPos];
             T nextItem = list[currPos+1];
-            cout << currentItem << " " << nextItem << endl;
+            // cout << currentItem << " " << nextItem << endl;
             if (currentItem > nextItem) {
                 swapWasMade = true;
                 T temp;
@@ -38,7 +38,7 @@ void BubbleSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
                 list[currPos] = nextItem;
                 list[currPos+1] = temp;
             }
-            cout << swapWasMade << endl;
+            // cout << swapWasMade << endl;
             currPos++;
         }
         if (!swapWasMade) {
