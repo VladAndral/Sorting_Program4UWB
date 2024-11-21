@@ -22,19 +22,27 @@ void BubbleSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
     int size = list.size();
     int start = 0;
     int end = size-2;
+    bool swapWasMade;
 
     while (end >= start) {
         int currPos = start;
+        swapWasMade = false;
         while (currPos <= end) {
             T currentItem = list[currPos];
             T nextItem = list[currPos+1];
+            cout << currentItem << " " << nextItem << endl;
             if (currentItem > nextItem) {
+                swapWasMade = true;
                 T temp;
                 temp = currentItem;
                 list[currPos] = nextItem;
                 list[currPos+1] = temp;
             }
+            cout << swapWasMade << endl;
             currPos++;
+        }
+        if (!swapWasMade) {
+            break;
         }
         end--;
     }
