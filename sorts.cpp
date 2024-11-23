@@ -17,7 +17,7 @@ using std::string;
 */
 
 template <class T>
-void BubbleSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
+void BubbleSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
 
     int size = list.size();
     int start = 0;
@@ -41,7 +41,7 @@ void BubbleSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
             // cout << swapWasMade << endl;
             currPos++;
         }
-        if (!swapWasMade) {
+        if (!swapWasMade) { // No matter what has already been sorted, if we go through and no swaps were made, the list is necessarily sorted
             break;
         }
         end--;
@@ -49,7 +49,7 @@ void BubbleSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
 }
 
 template <class T>
-void InsertionSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
+void InsertionSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
     int sortedPortion = 0;
     int size = list.size();
     while (sortedPortion < size-1) {
@@ -79,27 +79,75 @@ void InsertionSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
         }
         sortedPortion++;
     }
+}
 
+template <class T>
+void MergeSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
+
+    vector<T> list1;
+    vector<T> list2;
+
+
+    if (list.size() == 1) {
+        return;
+    }
+
+    int mid = list.size()/2; // integer division
+    int pos = 0;
+    while (pos < list.size()) {
+        if (pos < mid) {
+            list1.push_back(list[pos]);
+        } else {
+            list2.push_back(list[pos]);
+        }
+        pos++;
+    }
+
+    MergeSort(list1, lowestValueItem, highestValueItem);
+    MergeSort(list2, lowestValueItem, highestValueItem);
+
+    int list1Pos = 0;
+    int list2Pos = 0;
+    int mainListPos = 0;
+    while ((list1Pos < list1.size()) && (list2Pos < list2.size())) {
+        if (list1[list1Pos] <= list2[list2Pos]) {
+            list[mainListPos] = list1[list1Pos];
+            list1Pos++;
+        } else {
+            list[mainListPos] = list2[list2Pos];
+            list2Pos++;
+        }
+        mainListPos++;
+    }
+
+    if (list1Pos < list1.size()) {
+        while (list1Pos < list1.size()) {
+            list[mainListPos] = list1[list1Pos];
+            list1Pos++;
+            mainListPos++;
+        }
+    } else if (list2Pos < list2.size()){
+        while (list2Pos < list2.size()) {
+            list[mainListPos] = list2[list2Pos];
+            list2Pos++;
+            mainListPos++;
+        }
+    }
+}
+
+
+template <class T>
+void IterativeMergeSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
 
 }
 
 template <class T>
-void MergeSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
+void QuickSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
 
 }
 
 template <class T>
-void IterativeMergeSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
-
-}
-
-template <class T>
-void QuickSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
-
-}
-
-template <class T>
-void ShellSort(vector<T> &list, T lowestValueItem, T highestValueItem) {
+void ShellSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
 
 }
 
@@ -156,6 +204,8 @@ int main(int argc, char *argv[]) {
 
     } else if (sortMethod == "insertion") {
         InsertionSort(testList, 0, max);
+    } else if (sortMethod == "merge") {
+        MergeSort(testList, 0, max);
     }
     
     printList(testList);
