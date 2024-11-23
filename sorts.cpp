@@ -17,11 +17,11 @@ using std::string;
 */
 
 template <class T>
-void BubbleSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
+void BubbleSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 
     int size = list.size();
-    int start = 0;
-    int end = size-2;
+    int start = lowerIndex;
+    int end = upperIndex;
     bool swapWasMade;
 
     while (end >= start) {
@@ -49,10 +49,9 @@ void BubbleSort(vector<T> &list, const T lowestValueItem, const T highestValueIt
 }
 
 template <class T>
-void InsertionSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
-    int sortedPortion = 0;
-    int size = list.size();
-    while (sortedPortion < size-1) {
+void InsertionSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
+    int sortedPortion = lowerIndex;
+    while (sortedPortion < upperIndex) {
         
         int posOfItemToInsert = sortedPortion + 1;
         int toCheck = sortedPortion;
@@ -82,7 +81,7 @@ void InsertionSort(vector<T> &list, const T lowestValueItem, const T highestValu
 }
 
 template <class T>
-void MergeSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
+void MergeSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 
     vector<T> list1;
     vector<T> list2;
@@ -92,9 +91,9 @@ void MergeSort(vector<T> &list, const T lowestValueItem, const T highestValueIte
         return;
     }
 
-    int mid = list.size()/2; // integer division
-    int pos = 0;
-    while (pos < list.size()) {
+    int mid = ((upperIndex-lowerIndex)+1)/2; // integer division, +1 because of zero indexing
+    int pos = lowerIndex;
+    while (pos <= upperIndex) {
         if (pos < mid) {
             list1.push_back(list[pos]);
         } else {
@@ -103,12 +102,12 @@ void MergeSort(vector<T> &list, const T lowestValueItem, const T highestValueIte
         pos++;
     }
 
-    MergeSort(list1, lowestValueItem, highestValueItem);
-    MergeSort(list2, lowestValueItem, highestValueItem);
+    MergeSort(list1, 0, list1.size()-1);
+    MergeSort(list2, lowerIndex, list2.size()-1);
 
     int list1Pos = 0;
     int list2Pos = 0;
-    int mainListPos = 0;
+    int mainListPos = lowerIndex;
     while ((list1Pos < list1.size()) && (list2Pos < list2.size())) {
         if (list1[list1Pos] <= list2[list2Pos]) {
             list[mainListPos] = list1[list1Pos];
@@ -137,17 +136,17 @@ void MergeSort(vector<T> &list, const T lowestValueItem, const T highestValueIte
 
 
 template <class T>
-void IterativeMergeSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
+void IterativeMergeSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 
 }
 
 template <class T>
-void QuickSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
+void QuickSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 
 }
 
 template <class T>
-void ShellSort(vector<T> &list, const T lowestValueItem, const T highestValueItem) {
+void ShellSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 
 }
 
@@ -174,41 +173,47 @@ int main(int argc, char *argv[]) {
 
     string sortMethod;
     int size;
-    int max;
+    bool toPrint;
+    string userPrintChoice;
     if (argc > 1) {
         sortMethod = toLowercase(argv[1]);
         size = std::stoi(argv[2]);
-        max = std::stoi(argv[3]);
+        if (argc > 3) {
+            userPrintChoice = toLowercase(argv[3]);
+            (userPrintChoice.compare("print")) ? toPrint = false : toPrint = true;
+        }
     } else {
         cout << "Enter desired sorting algorithm: ";
         cin >> sortMethod;
         cout << "Enter list size: ";
         cin >> size;
-        cout << "Enter list max number: ";
-        cin >> max;
+        cout << "Print list? (y/n)";
+        cin >> userPrintChoice;
+        (userPrintChoice == "y") ? toPrint = true : toPrint = false;
     }
 
     srand(time(0));
     vector<int> testList;
     for (int i = 0; i < size; i++) {
-        int toAdd = rand()%max+1;
+        int toAdd = rand()%size+1;
         testList.push_back(toAdd);
     }
 
-    cout << "Unsorted List: ";
-    printList(testList);
-    cout << "\nSorted List:   ";
+    if (toPrint) {
+        cout << "Unsorted List: ";
+        printList(testList);
+        cout << "\n\nSorted List:   ";
+    }
 
     if (sortMethod == "bubble") {
-        BubbleSort(testList, 0, max);
-
+        BubbleSort(testList, 0, size-1);
     } else if (sortMethod == "insertion") {
-        InsertionSort(testList, 0, max);
+        InsertionSort(testList, 0, size-1);
     } else if (sortMethod == "merge") {
-        MergeSort(testList, 0, max);
+        MergeSort(testList, 0, size-1);
     }
     
-    printList(testList);
+    if (toPrint) printList(testList);
 
     // // Debug
     // srand(time(0));
