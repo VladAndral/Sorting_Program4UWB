@@ -138,16 +138,79 @@ void MergeSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 template <class T>
 void IterativeMergeSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 
+    vector<T> listToVary(list.size());
+
+
 }
 
 template <class T>
 void QuickSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
+
+    if ((upperIndex-lowerIndex) == 0) {
+        return;
+    }
+
+    int pivot = -1;
+    if (((upperIndex-lowerIndex)+1) > 2) {
+        // Using median-of-three method to get a good pick for pivot
+        vector<T> medianOfThree_array = {list[lowerIndex], list[(upperIndex-lowerIndex)/2], list[upperIndex]};
+        InsertionSort(medianOfThree_array, 0, medianOfThree_array.size()-1);
+
+        int tempIterator = lowerIndex;
+        while (pivot == -1) {
+            if (list[tempIterator] == medianOfThree_array[1]) {
+                pivot = tempIterator;
+            }
+            tempIterator++;
+        }
+
+        swap(list, upperIndex, pivot); // Pivot is now at end of list
+    }
+    pivot = upperIndex;
+    
+
+    int bigItemFromLeft = lowerIndex;
+    int smallItemFromRight = pivot-1;
+    bool pivotSorted = false;
+
+    while (!pivotSorted) {
+
+        while ((list[bigItemFromLeft] <= list[pivot]) && (bigItemFromLeft < upperIndex)) {
+            bigItemFromLeft++;
+        }
+
+        while ((list[smallItemFromRight] > list[pivot]) && (smallItemFromRight > lowerIndex)) {
+            smallItemFromRight--;
+        }
+
+        if (bigItemFromLeft >= smallItemFromRight) { // If they are equal, that means pivot is either biggest or smalles element
+            pivotSorted = true;
+        } else {
+            swap(list, bigItemFromLeft, smallItemFromRight);
+        }
+    }
+
+    swap(list, bigItemFromLeft, pivot);
+    pivot = bigItemFromLeft;
+
+    // We want to make sure there are lists to recurse into
+    if (pivot-1 >= lowerIndex) QuickSort(list, lowerIndex, pivot-1);
+    if (pivot+1 <= upperIndex) QuickSort(list, pivot+1, upperIndex);
+
 
 }
 
 template <class T>
 void ShellSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 
+}
+
+template <class T>
+void swap(vector<T> &list, int index1, int index2) {
+    T temp = list[index1];
+
+    list[index1] = list[index2];
+    list[index2] = temp;
 }
 
 string toLowercase(string str) // Borrowed Code
@@ -170,6 +233,10 @@ void printList(const vector<T> &list) {
 
 int main(int argc, char *argv[]) {
 
+
+    /* 
+        TODO: Use driver code
+    */
 
     string sortMethod;
     int size;
@@ -195,7 +262,7 @@ int main(int argc, char *argv[]) {
     srand(time(0));
     vector<int> testList;
     for (int i = 0; i < size; i++) {
-        int toAdd = rand()%size+1;
+        int toAdd = rand()%size*4+1;
         testList.push_back(toAdd);
     }
 
@@ -211,6 +278,8 @@ int main(int argc, char *argv[]) {
         InsertionSort(testList, 0, size-1);
     } else if (sortMethod == "merge") {
         MergeSort(testList, 0, size-1);
+    } else if (sortMethod == "quick") {
+        QuickSort(testList, 0, size-1);
     }
     
     if (toPrint) printList(testList);
@@ -220,11 +289,11 @@ int main(int argc, char *argv[]) {
     // int size = 7;
     // vector<int> testList;
     // for (int i = 0; i < size; i++) {
-    //     int toAdd = rand()%20;
+    //     int toAdd = rand()%(size*4);
     //     testList.push_back(toAdd);
     // }
 
-    // BubbleSort(testList, 0, 19);
+    // QuickSort(testList, 0, size-1);
 
     // for (int item : testList) {
     //     cout << item << "  ";

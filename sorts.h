@@ -4,23 +4,28 @@
 
 using std::vector;
 
-template <class T>
-void BubbleSort(vector<T> &list, T lowestValueItem, T highestValueItem);
+// TODO: Implementation in .h file (here)
 
 template <class T>
-void InsertionSort(vector<T> &list, T lowestValueItem, T highestValueItem);
+void BubbleSort(vector<T> &list, int lowerIndex, int upperIndex);
 
 template <class T>
-void MergeSort(vector<T> &list, T lowestValueItem, T highestValueItem);
+void InsertionSort(vector<T> &list, int lowerIndex, int upperIndex);
 
 template <class T>
-void IterativeMergeSort(vector<T> &list, T lowestValueItem, T highestValueItem);
+void MergeSort(vector<T> &list, int lowerIndex, int upperIndex);
 
 template <class T>
-void QuickSort(vector<T> &list, T lowestValueItem, T highestValueItem);
+void IterativeMergeSort(vector<T> &list, int lowerIndex, int upperIndex);
 
 template <class T>
-void ShellSort(vector<T> &list, T lowestValueItem, T highestValueItem);
+void QuickSort(vector<T> &list, int lowerIndex, int upperIndex);
+
+template <class T>
+void ShellSort(vector<T> &list, int lowerIndex, int upperIndex);
+
+template <class T>
+void swap(vector<T> &list, int index1, int index2);
 
 
 #endif
