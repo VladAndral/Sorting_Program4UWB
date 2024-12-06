@@ -151,7 +151,7 @@ void QuickSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
     }
 
     int pivot = -1;
-    if (((upperIndex-lowerIndex)+1) > 2) {
+    if (((upperIndex+1)-lowerIndex) > 2) {
         // Using median-of-three method to get a good pick for pivot
         vector<T> medianOfThree_array = {list[lowerIndex], list[(upperIndex-lowerIndex)/2], list[upperIndex]};
         InsertionSort(medianOfThree_array, 0, medianOfThree_array.size()-1);
@@ -203,6 +203,25 @@ void QuickSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 template <class T>
 void ShellSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 
+    int gap = ((upperIndex-lowerIndex))/2; // int division
+
+    while (gap > 1) {
+        
+        for (int i = lowerIndex; i < (lowerIndex+gap); i++) {
+            int currIndexSubArray = i;
+            int nextItemIndexInSubArray = i+gap;
+            while (nextItemIndexInSubArray <= upperIndex) {
+                if (list[nextItemIndexInSubArray] < list[currIndexSubArray]) {
+                    swap(list, currIndexSubArray, nextItemIndexInSubArray);
+                }
+                nextItemIndexInSubArray += gap;
+            }
+        }
+        gap /= 2;
+    }
+
+    InsertionSort(list, 0, list.size()-1);
+
 }
 
 template <class T>
@@ -212,6 +231,11 @@ void swap(vector<T> &list, int index1, int index2) {
     list[index1] = list[index2];
     list[index2] = temp;
 }
+
+
+
+
+
 
 string toLowercase(string str) // Borrowed Code
 {
@@ -230,6 +254,12 @@ void printList(const vector<T> &list) {
         cout << item << "  ";
     }
 }
+
+
+
+
+
+
 
 int main(int argc, char *argv[]) {
 
@@ -280,6 +310,8 @@ int main(int argc, char *argv[]) {
         MergeSort(testList, 0, size-1);
     } else if (sortMethod == "quick") {
         QuickSort(testList, 0, size-1);
+    } else if (sortMethod == "shell") {
+        ShellSort(testList, 0, size-1);
     }
     
     if (toPrint) printList(testList);

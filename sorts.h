@@ -27,5 +27,8 @@ void ShellSort(vector<T> &list, int lowerIndex, int upperIndex);
 template <class T>
 void swap(vector<T> &list, int index1, int index2);
 
+template <class T>
+void printList(const vector<T> &list);
+
 
 #endif
