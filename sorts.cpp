@@ -91,7 +91,7 @@ void MergeSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
         return;
     }
 
-    int mid = ((upperIndex-lowerIndex)+1)/2; // integer division, +1 because of zero indexing
+    int mid = ((upperIndex+1)-lowerIndex)/2; // integer division, +1 because of zero indexing
     int pos = lowerIndex;
     while (pos <= upperIndex) {
         if (pos < mid) {
@@ -134,12 +134,80 @@ void MergeSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
     }
 }
 
+template <class T>
+void compareSort(const vector<T> &list, vector<T> &listToCopyTo, const int listToCopyTo_copyStartIndex, const int bottomSubList_lowerBound, const int bottomSubList_upperBound, const int topSubList_lowerBound, const int topSubList_upperBound) {
+
+    int bottomSubList_iterator = bottomSubList_lowerBound;
+    int topSubList_iterator = topSubList_lowerBound;
+    int listToCopyTo_iterator = listToCopyTo_copyStartIndex;
+
+    while ((bottomSubList_iterator < bottomSubList_upperBound) && ((topSubList_iterator < topSubList_upperBound) && topSubList_iterator < list.size())) {
+        if (list[bottomSubList_iterator] < list[topSubList_iterator]) {
+            listToCopyTo[listToCopyTo_iterator] = list[bottomSubList_iterator];
+            bottomSubList_iterator++;
+        } else {
+            listToCopyTo[listToCopyTo_iterator] = list[topSubList_iterator];
+            topSubList_iterator++;
+        }
+        listToCopyTo_iterator++;
+    }
+
+    if (bottomSubList_iterator == bottomSubList_upperBound) {
+        while (topSubList_iterator < topSubList_upperBound) {
+            listToCopyTo[listToCopyTo_iterator] = list[topSubList_iterator];
+            topSubList_iterator++;
+            listToCopyTo_iterator++;
+        }
+    } else {
+        while (bottomSubList_iterator < bottomSubList_upperBound) {
+            listToCopyTo[listToCopyTo_iterator] = list[bottomSubList_iterator];
+            bottomSubList_iterator++;
+            listToCopyTo_iterator++;
+        }
+    }
+
+}
 
 template <class T>
 void IterativeMergeSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
 
-    vector<T> listToVary(list.size());
+    vector<T> tempList = list; // Copy Constructor
+    int subArray_size = 1;
+    int listSize = list.size();
+    bool onTempList = false;
 
+    while (subArray_size < list.size()) {
+
+        int bottomSubArray_Index = lowerIndex;
+        int topSubArray_Index = bottomSubArray_Index+subArray_size;
+
+        while (topSubArray_Index < listSize) {
+            if (onTempList) {
+                compareSort(tempList, list, bottomSubArray_Index, bottomSubArray_Index, bottomSubArray_Index+subArray_size, topSubArray_Index, topSubArray_Index+subArray_size);
+            } else {
+                compareSort(list, tempList, bottomSubArray_Index, bottomSubArray_Index, bottomSubArray_Index+subArray_size, topSubArray_Index, topSubArray_Index+subArray_size);
+            }
+
+            bottomSubArray_Index += 2*subArray_size;
+            topSubArray_Index = bottomSubArray_Index+subArray_size;
+        }
+
+        if (bottomSubArray_Index < listSize) {
+            int tempTopSubArray_Index = ((listSize-bottomSubArray_Index)/2)+bottomSubArray_Index;
+            if (onTempList) {
+                compareSort(tempList, list, bottomSubArray_Index, bottomSubArray_Index, tempTopSubArray_Index, tempTopSubArray_Index, listSize);
+            } else {
+                compareSort(list, tempList, bottomSubArray_Index, bottomSubArray_Index, tempTopSubArray_Index, tempTopSubArray_Index, listSize);
+            }
+        }
+
+        subArray_size *= 2;
+        onTempList = !onTempList;
+
+    } // Outer while
+
+    onTempList = !onTempList; // If we broke out, then we need to flip back to what it was before
+    if (!onTempList) list = tempList;
 
 }
 
@@ -312,6 +380,8 @@ int main(int argc, char *argv[]) {
         QuickSort(testList, 0, size-1);
     } else if (sortMethod == "shell") {
         ShellSort(testList, 0, size-1);
+    } else if (sortMethod == "iterative") {
+        IterativeMergeSort(testList, 0, size-1);
     }
     
     if (toPrint) printList(testList);
@@ -325,7 +395,7 @@ int main(int argc, char *argv[]) {
     //     testList.push_back(toAdd);
     // }
 
-    // QuickSort(testList, 0, size-1);
+    // IterativeMergeSort(testList, 0, size-1);
 
     // for (int item : testList) {
     //     cout << item << "  ";
