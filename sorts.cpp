@@ -1,7 +1,9 @@
 #include "sorts.h"
-#include <vector>
+// #include <vector>
 #include <chrono>
 #include <iostream>
+#include <sys/time.h>
+#include <cmath>
 
 using std::vector;
 using std::cout;
@@ -9,6 +11,7 @@ using std::cin;
 using std::endl;
 using std::srand;
 using std::string;
+using std::cerr;
 
 /* 
     1. Develop, compile, and test locally
@@ -16,294 +19,133 @@ using std::string;
     3. Pull on LinuxLabs and run
 */
 
-template <class T>
-void BubbleSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
-
-    int size = list.size();
-    int start = lowerIndex;
-    int end = upperIndex;
-    bool swapWasMade;
-
-    while (end >= start) {
-        int currPos = start;
-        swapWasMade = false;
-        while (currPos <= end) {
-            T currentItem = list[currPos];
-            T nextItem = list[currPos+1];
-            // cout << currentItem << " " << nextItem << endl;
-            if (currentItem > nextItem) {
-                swapWasMade = true;
-                T temp;
-                temp = currentItem;
-                list[currPos] = nextItem;
-                list[currPos+1] = temp;
-            }
-            // cout << swapWasMade << endl;
-            currPos++;
-        }
-        if (!swapWasMade) { // No matter what has already been sorted, if we go through and no swaps were made, the list is necessarily sorted
-            break;
-        }
-        end--;
-    }
-}
-
-template <class T>
-void InsertionSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
-    int sortedPortion = lowerIndex;
-    while (sortedPortion < upperIndex) {
-        
-        int posOfItemToInsert = sortedPortion + 1;
-        int toCheck = sortedPortion;
-        bool insertNeeded = false;
-        
-        while (toCheck >= 0) {
-            if (list[posOfItemToInsert] < list[toCheck]) { // if the top sorted item is less than this item, no need to check rest
-                while ((toCheck >= 0) && (list[posOfItemToInsert] < list[toCheck])) {
-                    toCheck--;
-                }
-                toCheck++; // insert after the item that is smaller than toInsert (deals with back insertion as well)
-
-                T temp;
-                temp = list[posOfItemToInsert];
-                int posShift = posOfItemToInsert-1;
-                while (posShift >= toCheck) {
-                    list[posShift+1] = list[posShift];
-                    posShift--;
-                }
-                posShift++;
-                list[posShift] = temp;
-                break;
-            } else break;
-        }
-        sortedPortion++;
-    }
-}
-
-template <class T>
-void MergeSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
-
-    vector<T> list1;
-    vector<T> list2;
 
 
-    if (list.size() == 1) {
-        return;
-    }
+// template <class T>
+// void printList(const vector<T> &list) {
+//     for (T item : list) {
+//         cout << item << "  ";
+//     }
+// }
 
-    int mid = ((upperIndex+1)-lowerIndex)/2; // integer division, +1 because of zero indexing
-    int pos = lowerIndex;
-    while (pos <= upperIndex) {
-        if (pos < mid) {
-            list1.push_back(list[pos]);
-        } else {
-            list2.push_back(list[pos]);
-        }
-        pos++;
-    }
 
-    MergeSort(list1, 0, list1.size()-1);
-    MergeSort(list2, lowerIndex, list2.size()-1);
 
-    int list1Pos = 0;
-    int list2Pos = 0;
-    int mainListPos = lowerIndex;
-    while ((list1Pos < list1.size()) && (list2Pos < list2.size())) {
-        if (list1[list1Pos] <= list2[list2Pos]) {
-            list[mainListPos] = list1[list1Pos];
-            list1Pos++;
-        } else {
-            list[mainListPos] = list2[list2Pos];
-            list2Pos++;
-        }
-        mainListPos++;
-    }
 
-    if (list1Pos < list1.size()) {
-        while (list1Pos < list1.size()) {
-            list[mainListPos] = list1[list1Pos];
-            list1Pos++;
-            mainListPos++;
-        }
-    } else if (list2Pos < list2.size()){
-        while (list2Pos < list2.size()) {
-            list[mainListPos] = list2[list2Pos];
-            list2Pos++;
-            mainListPos++;
-        }
-    }
-}
 
-template <class T>
-void compareSort(const vector<T> &list, vector<T> &listToCopyTo, const int listToCopyTo_copyStartIndex, const int bottomSubList_lowerBound, const int bottomSubList_upperBound, const int topSubList_lowerBound, const int topSubList_upperBound) {
 
-    int bottomSubList_iterator = bottomSubList_lowerBound;
-    int topSubList_iterator = topSubList_lowerBound;
-    int listToCopyTo_iterator = listToCopyTo_copyStartIndex;
 
-    while ((bottomSubList_iterator < bottomSubList_upperBound) && ((topSubList_iterator < topSubList_upperBound) && topSubList_iterator < list.size())) {
-        if (list[bottomSubList_iterator] < list[topSubList_iterator]) {
-            listToCopyTo[listToCopyTo_iterator] = list[bottomSubList_iterator];
-            bottomSubList_iterator++;
-        } else {
-            listToCopyTo[listToCopyTo_iterator] = list[topSubList_iterator];
-            topSubList_iterator++;
-        }
-        listToCopyTo_iterator++;
-    }
+// int main(int argc, char *argv[]) {
 
-    if (bottomSubList_iterator == bottomSubList_upperBound) {
-        while (topSubList_iterator < topSubList_upperBound) {
-            listToCopyTo[listToCopyTo_iterator] = list[topSubList_iterator];
-            topSubList_iterator++;
-            listToCopyTo_iterator++;
-        }
-    } else {
-        while (bottomSubList_iterator < bottomSubList_upperBound) {
-            listToCopyTo[listToCopyTo_iterator] = list[bottomSubList_iterator];
-            bottomSubList_iterator++;
-            listToCopyTo_iterator++;
-        }
-    }
 
-}
+//     /* 
+//         TODO: Use driver code
+//     */
 
-template <class T>
-void IterativeMergeSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
+//     string sortMethod;
+//     int size;
+//     bool toPrint;
+//     string userPrintChoice;
+//     if (argc > 1) {
+//         sortMethod = toLowercase(argv[1]);
+//         size = std::stoi(argv[2]);
+//         if (argc > 3) {
+//             userPrintChoice = toLowercase(argv[3]);
+//             (userPrintChoice.compare("print")) ? toPrint = false : toPrint = true;
+//         }
+//     } else {
+//         cout << "Enter desired sorting algorithm: ";
+//         cin >> sortMethod;
+//         cout << "Enter list size: ";
+//         cin >> size;
+//         cout << "Print list? (y/n)";
+//         cin >> userPrintChoice;
+//         (userPrintChoice == "y") ? toPrint = true : toPrint = false;
+//     }
 
-    vector<T> tempList = list; // Copy Constructor
-    int subArray_size = 1;
-    int listSize = list.size();
-    bool onTempList = false;
+//     srand(time(0));
+//     vector<int> testList;
+//     for (int i = 0; i < size; i++) {
+//         int toAdd = rand()%size*4+1;
+//         testList.push_back(toAdd);
+//     }
 
-    while (subArray_size < list.size()) {
+//     if (toPrint) {
+//         cout << "Unsorted List: ";
+//         printList(testList);
+//         cout << "\n\nSorted List:   ";
+//     }
 
-        int bottomSubArray_Index = lowerIndex;
-        int topSubArray_Index = bottomSubArray_Index+subArray_size;
-
-        while (topSubArray_Index < listSize) {
-            if (onTempList) {
-                compareSort(tempList, list, bottomSubArray_Index, bottomSubArray_Index, bottomSubArray_Index+subArray_size, topSubArray_Index, topSubArray_Index+subArray_size);
-            } else {
-                compareSort(list, tempList, bottomSubArray_Index, bottomSubArray_Index, bottomSubArray_Index+subArray_size, topSubArray_Index, topSubArray_Index+subArray_size);
-            }
-
-            bottomSubArray_Index += 2*subArray_size;
-            topSubArray_Index = bottomSubArray_Index+subArray_size;
-        }
-
-        if (bottomSubArray_Index < listSize) {
-            int tempTopSubArray_Index = ((listSize-bottomSubArray_Index)/2)+bottomSubArray_Index;
-            if (onTempList) {
-                compareSort(tempList, list, bottomSubArray_Index, bottomSubArray_Index, tempTopSubArray_Index, tempTopSubArray_Index, listSize);
-            } else {
-                compareSort(list, tempList, bottomSubArray_Index, bottomSubArray_Index, tempTopSubArray_Index, tempTopSubArray_Index, listSize);
-            }
-        }
-
-        subArray_size *= 2;
-        onTempList = !onTempList;
-
-    } // Outer while
-
-    onTempList = !onTempList; // If we broke out, then we need to flip back to what it was before
-    if (!onTempList) list = tempList;
-
-}
-
-template <class T>
-void QuickSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
-
-    if ((upperIndex-lowerIndex) == 0) {
-        return;
-    }
-
-    int pivot = -1;
-    if (((upperIndex+1)-lowerIndex) > 2) {
-        // Using median-of-three method to get a good pick for pivot
-        vector<T> medianOfThree_array = {list[lowerIndex], list[(upperIndex-lowerIndex)/2], list[upperIndex]};
-        InsertionSort(medianOfThree_array, 0, medianOfThree_array.size()-1);
-
-        int tempIterator = lowerIndex;
-        while (pivot == -1) {
-            if (list[tempIterator] == medianOfThree_array[1]) {
-                pivot = tempIterator;
-            }
-            tempIterator++;
-        }
-
-        swap(list, upperIndex, pivot); // Pivot is now at end of list
-    }
-    pivot = upperIndex;
+//     if (sortMethod == "bubble") {
+//         BubbleSort(testList, 0, size-1);
+//     } else if (sortMethod == "insertion") {
+//         InsertionSort(testList, 0, size-1);
+//     } else if (sortMethod == "merge") {
+//         MergeSort(testList, 0, size-1);
+//     } else if (sortMethod == "quick") {
+//         QuickSort(testList, 0, size-1);
+//     } else if (sortMethod == "shell") {
+//         ShellSort(testList, 0, size-1);
+//     } else if (sortMethod == "iterative") {
+//         IterativeMergeSort(testList, 0, size-1);
+//     }
     
+//     if (toPrint) printList(testList);
 
-    int bigItemFromLeft = lowerIndex;
-    int smallItemFromRight = pivot-1;
-    bool pivotSorted = false;
+//     // // Debug
+//     // srand(time(0));
+//     // int size = 7;
+//     // vector<int> testList;
+//     // for (int i = 0; i < size; i++) {
+//     //     int toAdd = rand()%(size*4);
+//     //     testList.push_back(toAdd);
+//     // }
 
-    while (!pivotSorted) {
+//     // IterativeMergeSort(testList, 0, size-1);
 
-        while ((list[bigItemFromLeft] <= list[pivot]) && (bigItemFromLeft < upperIndex)) {
-            bigItemFromLeft++;
-        }
+//     // for (int item : testList) {
+//     //     cout << item << "  ";
+//     // }
+    
+// }
 
-        while ((list[smallItemFromRight] > list[pivot]) && (smallItemFromRight > lowerIndex)) {
-            smallItemFromRight--;
-        }
 
-        if (bigItemFromLeft >= smallItemFromRight) { // If they are equal, that means pivot is either biggest or smalles element
-            pivotSorted = true;
-        } else {
-            swap(list, bigItemFromLeft, smallItemFromRight);
-        }
+
+
+/* 
+        PROJECT DRIVER CODE
+*/
+
+
+//Global functions
+void InitVector(vector<int> &item_vector, int rand_max) {
+    if (rand_max < 0) {
+        return;
     }
-
-    swap(list, bigItemFromLeft, pivot);
-    pivot = bigItemFromLeft;
-
-    // We want to make sure there are lists to recurse into
-    if (pivot-1 >= lowerIndex) QuickSort(list, lowerIndex, pivot-1);
-    if (pivot+1 <= upperIndex) QuickSort(list, pivot+1, upperIndex);
-
-
-}
-
-template <class T>
-void ShellSort(vector<T> &list, const int lowerIndex, const int upperIndex) {
-
-    int gap = ((upperIndex-lowerIndex))/2; // int division
-
-    while (gap > 1) {
-        
-        for (int i = lowerIndex; i < (lowerIndex+gap); i++) {
-            int currIndexSubArray = i;
-            int nextItemIndexInSubArray = i+gap;
-            while (nextItemIndexInSubArray <= upperIndex) {
-                if (list[nextItemIndexInSubArray] < list[currIndexSubArray]) {
-                    swap(list, currIndexSubArray, nextItemIndexInSubArray);
-                }
-                nextItemIndexInSubArray += gap;
-            }
-        }
-        gap /= 2;
+    vector<int> pool(rand_max);
+    for (int i = 0; i < rand_max; i++) {
+        pool[i] = i;
     }
-
-    InsertionSort(list, 0, list.size()-1);
-
+    int spot;
+    for (int i = 0; i < rand_max; i++) {
+        spot = rand() % (pool.size());
+        item_vector[i] = pool[spot];
+        pool.erase(pool.begin() + spot);
+    }
 }
 
-template <class T>
-void swap(vector<T> &list, int index1, int index2) {
-    T temp = list[index1];
-
-    list[index1] = list[index2];
-    list[index2] = temp;
+void PrintVector(const vector<int> &item_vector, string name) {
+    int size = item_vector.size();
+    for (int i = 0; i < size; i++) {
+        cout << item_vector[i] << " ";
+    }
+    cout << endl;
 }
-
-
-
-
-
+// Function to calculate elapsed time
+// Microseconds
+int Elapsed(const timeval &start, const timeval &end) {
+    return (end.tv_sec - start.tv_sec) * 1000000
+    + (end.tv_usec - start.tv_usec);
+}
 
 string toLowercase(string str) // Borrowed Code
 {
@@ -316,89 +158,139 @@ string toLowercase(string str) // Borrowed Code
     return result;
 }
 
-template <class T>
-void printList(const vector<T> &list) {
-    for (T item : list) {
-        cout << item << "  ";
+void export_times() {
+
+    struct timeval start_time, end_time;
+
+    vector<string> daList = {"bubble", "insertion", "merge", "iterative", "quick", "shell"};
+    
+    // cout << "something!!!!!!";
+
+    for (string sort_name : daList) {
+
+        cout << sort_name + ": ";
+
+        // for (int i = 2; i < 100000; i*=2) {
+        for (int i = 0; i <= 10; i++) {
+
+            // int size = i;
+            int size = 1000*i;
+
+            srand(1);
+            vector<int> items(size);
+            InitVector(items, size);
+
+            gettimeofday(&start_time, 0);
+            if (sort_name == "bubble") {
+                BubbleSort(items, 0, size-1);
+            } else if (sort_name == "insertion") {
+                InsertionSort(items, 0, size-1);
+            } else if (sort_name == "merge") {
+                MergeSort(items, 0, size-1);
+            } else if (sort_name == "iterative") {
+                IterativeMergeSort(items, 0, size-1);
+            } else if (sort_name == "quick") {
+                QuickSort(items, 0, size-1);
+            } else if (sort_name == "shell") {
+                ShellSort(items, 0, size-1);
+            }
+            gettimeofday(&end_time, 0);
+            int timeElapsed = Elapsed(start_time, end_time);
+
+
+            cout << std::to_string(timeElapsed) + " ";
+
+
+        }
+
+        cout << "\n";
+        
     }
+
 }
 
+int main(int argc, char* argv[]) {
+
+    // cout << "something";
+    int size = 0;
+    string sort_name = "";
+    bool print_out = false;
 
 
+    if ((argc < 3) || (argc > 4)) {
 
+        if (argc == 1) {
+            // cout << "Print runtimes for different array sizes? [y/n]";
+            // string userInput;
+            // cin >> userInput;
+            // if (userInput == "y") export_times();
 
+            // // Debug
+            // size = 10;
+            // vector<int> items(size);
+            // InitVector(items, size);
+            // ShellSort(items, 0, size-1);
+            // return 0;
 
-
-int main(int argc, char *argv[]) {
-
-
-    /* 
-        TODO: Use driver code
-    */
-
-    string sortMethod;
-    int size;
-    bool toPrint;
-    string userPrintChoice;
-    if (argc > 1) {
-        sortMethod = toLowercase(argv[1]);
-        size = std::stoi(argv[2]);
-        if (argc > 3) {
-            userPrintChoice = toLowercase(argv[3]);
-            (userPrintChoice.compare("print")) ? toPrint = false : toPrint = true;
         }
-    } else {
-        cout << "Enter desired sorting algorithm: ";
-        cin >> sortMethod;
-        cout << "Enter list size: ";
-        cin >> size;
-        cout << "Print list? (y/n)";
-        cin >> userPrintChoice;
-        (userPrintChoice == "y") ? toPrint = true : toPrint = false;
-    }
 
-    srand(time(0));
-    vector<int> testList;
-    for (int i = 0; i < size; i++) {
-        int toAdd = rand()%size*4+1;
-        testList.push_back(toAdd);
-    }
 
-    if (toPrint) {
-        cout << "Unsorted List: ";
-        printList(testList);
-        cout << "\n\nSorted List:   ";
-    }
-
-    if (sortMethod == "bubble") {
-        BubbleSort(testList, 0, size-1);
-    } else if (sortMethod == "insertion") {
-        InsertionSort(testList, 0, size-1);
-    } else if (sortMethod == "merge") {
-        MergeSort(testList, 0, size-1);
-    } else if (sortMethod == "quick") {
-        QuickSort(testList, 0, size-1);
-    } else if (sortMethod == "shell") {
-        ShellSort(testList, 0, size-1);
-    } else if (sortMethod == "iterative") {
-        IterativeMergeSort(testList, 0, size-1);
+        else {
+            cerr << "Usage: Sorter algorithm size [Print]" << endl;
+            return -1;
+        }
     }
     
-    if (toPrint) printList(testList);
+    sort_name = toLowercase(string(argv[1]));
+    size = atoi(argv[2]);
 
-    // // Debug
-    // srand(time(0));
-    // int size = 7;
-    // vector<int> testList;
-    // for (int i = 0; i < size; i++) {
-    //     int toAdd = rand()%(size*4);
-    //     testList.push_back(toAdd);
-    // }
+    if (size <= 0) {
+        cerr << "Vector size must be positive" << endl;
+        return -1;
+    }
 
-    // IterativeMergeSort(testList, 0, size-1);
+    if (argc == 4) {
+        string print_arr = toLowercase(string(argv[3]));
+        if (print_arr == "print") {
+            print_out = true;
+        } else {
+            cerr << "Usage: Sorter algorithm size [Print]" << endl;
+            return -1;
+        }
+    }
 
-    // for (int item : testList) {
-    //     cout << item << "  ";
-    // }
+    srand(1);
+    vector<int> items(size);
+    InitVector(items, size);
+    if (print_out) {
+        cout << "Initial:" << endl;
+        PrintVector(items, string("items"));
+        cout << endl;
+    }
+
+    //get time to measure the time it takes to sort
+    struct timeval start_time, end_time;
+    gettimeofday(&start_time, 0);
+    if (sort_name == "bubble") {
+        BubbleSort(items, 0, size-1);
+    } else if (sort_name == "insertion") {
+        InsertionSort(items, 0, size-1);
+    } else if (sort_name == "merge") {
+        MergeSort(items, 0, size-1);
+    } else if (sort_name == "quick") {
+        QuickSort(items, 0, size-1);
+    } else if (sort_name == "shell") {
+        ShellSort(items, 0, size-1);
+    } else if (sort_name == "iterative") {
+        IterativeMergeSort(items, 0, size-1);
+    }
     
+    gettimeofday(&end_time, 0);
+    
+    if (print_out) {
+        cout << "Sorted:" << endl;
+        PrintVector(items, string("item"));
+    }
+    cout << "Time (microsecs): " << Elapsed(start_time, end_time) << endl;
+    return 0;
 }
