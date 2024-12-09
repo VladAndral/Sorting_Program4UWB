@@ -170,11 +170,11 @@ void export_times() {
 
         cout << sort_name + ": ";
 
-        // for (int i = 2; i < 100000; i*=2) {
-        for (int i = 0; i <= 10; i++) {
+        for (int i = 2; i < 10000; i*=2) {
+        // for (int i = 0; i <= 10; i++) {
 
-            // int size = i;
-            int size = 1000*i;
+            int size = i;
+            // int size = 1000*i;
 
             srand(1);
             vector<int> items(size);
@@ -220,17 +220,17 @@ int main(int argc, char* argv[]) {
     if ((argc < 3) || (argc > 4)) {
 
         if (argc == 1) {
-            // cout << "Print runtimes for different array sizes? [y/n]";
-            // string userInput;
-            // cin >> userInput;
-            // if (userInput == "y") export_times();
+            cout << "Print runtimes for different array sizes? [y/n]\n";
+            string userInput;
+            cin >> userInput;
+            if (userInput == "y") export_times();
 
             // // Debug
             // size = 10;
             // vector<int> items(size);
             // InitVector(items, size);
             // ShellSort(items, 0, size-1);
-            // return 0;
+            return 0;
 
         }
 
